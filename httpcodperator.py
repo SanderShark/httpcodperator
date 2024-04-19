@@ -3,6 +3,8 @@ import requests
 import time
 
 def check_status_codes(base_url, filename):
+    success_codes = []
+
     with open(filename, 'r') as file:
         for line in file:
             code = line.strip()
@@ -10,9 +12,11 @@ def check_status_codes(base_url, filename):
             response = requests.get(url)
             print(f"Checking status code {code}... Response code: {response.status_code}")
             if response.status_code == 200:
-                with open('success_codes.txt', 'a') as success_file:
-                    success_file.write(code + '\n')
+                success_codes.append(code)
             time.sleep(0.2)  # Limiting to 5 requests per second
+
+    with open('success_codes.txt', 'w') as success_file:
+        success_file.write('\n'.join(success_codes))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Check status codes against a base URL')
